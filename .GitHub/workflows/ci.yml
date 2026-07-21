@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy
+      
+      - name: Create example netlist
+        run: |
+          mkdir -p examples
+          cat > examples/ota_2stage.sp << 'EOF'
+          * OpenEDA Example: Two-Stage Miller OTA
+          .SUBCKT OTA_2STAGE VDD VSS VIN+ VIN- VOUT
+          M1   D1 VIN+ S VSS nmos W=2.0u L=0.15u
+          M2   D2 VIN- S VSS nmos W=2.0u L=0.15u
+          M3   S VBIAS VSS VSS nmos W=4.0u L=0.3u
+          M4   D1 D1 VDD VDD pmos W=4.0u L=0.3u
+          M5   D2 D1 VDD VDD pmos W=4.0u L=0.3u
+          M6   VOUT VBIAS VSS VSS nmos W=8.0u L=0.15u
+          M7   VOUT D2 VDD VDD pmos W=16.0u L=0.3u
+          C1   VOUT D2 2.0p
+          .ENDS
+          EOF
+      
+      - name: Run pipeline test
+        run: |
+          python test_pipeline.py
+      
+      - name: Upload GDS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ota-layout
+          path: output/ota_layout.gds
+      
+      - name: Upload results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: output/results.json
+      
+      - name: Validate GDS output
+        run: |
+          if [ ! -f "output/ota_layout.gds" ]; then
+            echo "Error: GDS file not generated"
+            exit 1
+          fi
+          if [ ! -s "output/ota_layout.gds" ]; then
+            echo "Error: GDS file is empty"
+            exit 1
+          fi
+          echo "GDS file validated: $(wc -c < output/ota_layout.gds) bytes"
+      
+      - name: Validate results
+        run: |
+          python -c "
+          import json
+          with open('output/results.json') as f:
+              data = json.load(f)
+          assert data['result_count'] == 1
+          assert data['results'][0]['circuit_name'] == 'ota_2stage'
+          print('Results validated successfully')
+          "
