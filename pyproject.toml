@@ -1,14 +1,14 @@
 [build-system]
 requires = [
-    "setuptools>=70.0",
-    "wheel"
+    "setuptools>=77.0",
+    "wheel",
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "openeda"
 version = "0.1.0"
-description = "Open-source Electronic Design Automation framework for analog layout generation, routing, benchmarking, and GDSII export."
+description = "OpenEDA: Open-source Electronic Design Automation framework."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
@@ -18,28 +18,13 @@ authors = [
 ]
 
 keywords = [
-    "eda",
+    "EDA",
     "analog",
-    "vlsi",
     "layout",
     "routing",
-    "gdsii",
-    "cad",
-    "ic",
-    "electronics"
-]
-
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Science/Research",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Scientific/Engineering",
+    "VLSI",
+    "IC",
+    "GDSII",
 ]
 
 dependencies = [
@@ -48,7 +33,6 @@ dependencies = [
     "networkx>=3.3",
     "matplotlib>=3.9",
     "pandas>=2.2",
-    "shapely>=2.0",
     "pyyaml>=6.0",
 ]
 
@@ -62,11 +46,6 @@ dev = [
     "bandit>=1.7",
     "build>=1.2",
     "twine>=5.0",
-]
-
-docs = [
-    "mkdocs",
-    "mkdocs-material",
 ]
 
 [project.urls]
@@ -96,32 +75,31 @@ select = [
     "W",
     "I",
     "UP",
-    "B"
+    "B",
 ]
-
 ignore = [
-    "E501"
+    "E501",
 ]
 
 [tool.flake8]
 max-line-length = 88
 extend-ignore = [
     "E203",
-    "W503"
+    "W503",
 ]
 
 [tool.pytest.ini_options]
 testpaths = [
-    "tests"
+    "tests",
 ]
 python_files = [
-    "test_*.py"
+    "test_*.py",
 ]
-addopts = "-ra -q"
+addopts = "-ra"
 
 [tool.coverage.run]
 source = [
-    "openeda"
+    "openeda",
 ]
 
 [tool.coverage.report]
@@ -130,5 +108,5 @@ skip_covered = false
 
 [tool.bandit]
 exclude_dirs = [
-    "tests"
+    "tests",
 ]
