@@ -1,4 +1,4 @@
-name: Test OpenEDA Pipeline
+name: CI
 
 on:
   push:
