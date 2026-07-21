@@ -1,48 +1,45 @@
 [build-system]
 requires = [
-    "setuptools>=70",
-    "wheel",
+    "setuptools>=70.0",
+    "wheel"
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "openeda"
 version = "0.1.0"
-description = "Open-source analog electronic design automation framework for layout generation, routing, benchmarking, and research."
+description = "Open-source Electronic Design Automation framework for analog layout generation, routing, benchmarking, and GDSII export."
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 
 authors = [
-    {name = "Kazi Saad Asif"}
+    { name = "Kazi Saad Asif" }
 ]
 
 keywords = [
     "eda",
     "analog",
-    "layout",
     "vlsi",
-    "ic",
-    "electronic-design-automation",
-    "cad",
+    "layout",
     "routing",
-    "placement",
     "gdsii",
-    "research",
+    "cad",
+    "ic",
+    "electronics"
 ]
 
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
-    "Topic :: Scientific/Engineering",
-    "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: Apache Software License",
-    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
 ]
 
 dependencies = [
@@ -56,16 +53,15 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-
 dev = [
-    "pytest>=8",
-    "pytest-cov>=5",
-    "black>=24",
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "black>=24.0",
     "ruff>=0.5",
-    "flake8>=7",
+    "flake8>=7.0",
     "bandit>=1.7",
     "build>=1.2",
-    "twine>=5",
+    "twine>=5.0",
 ]
 
 docs = [
@@ -79,11 +75,10 @@ Repository = "https://github.com/ksaad20/OpenEDA"
 Issues = "https://github.com/ksaad20/OpenEDA/issues"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
 include-package-data = true
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
 include = ["openeda*"]
 
 [tool.black]
@@ -101,32 +96,32 @@ select = [
     "W",
     "I",
     "UP",
-    "B",
+    "B"
 ]
 
 ignore = [
-    "E501",
+    "E501"
 ]
 
 [tool.flake8]
 max-line-length = 88
 extend-ignore = [
     "E203",
-    "W503",
+    "W503"
 ]
 
 [tool.pytest.ini_options]
 testpaths = [
-    "tests",
+    "tests"
 ]
 python_files = [
-    "test_*.py",
+    "test_*.py"
 ]
 addopts = "-ra -q"
 
 [tool.coverage.run]
 source = [
-    "openeda",
+    "openeda"
 ]
 
 [tool.coverage.report]
@@ -135,5 +130,5 @@ skip_covered = false
 
 [tool.bandit]
 exclude_dirs = [
-    "tests",
+    "tests"
 ]
