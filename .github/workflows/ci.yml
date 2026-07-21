@@ -1,0 +1,136 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip wheel setuptools
+
+      - name: Install package
+        run: |
+          pip install -e .
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+
+      - name: Install development tools
+        run: |
+          pip install \
+            pytest \
+            pytest-cov \
+            black \
+            ruff \
+            flake8 \
+            bandit
+
+      - name: Repository diagnostics
+        run: |
+          echo "Working directory:"
+          pwd
+
+          echo ""
+          echo "Repository contents:"
+          ls -la
+
+          echo ""
+          echo "Python version:"
+          python --version
+
+          echo ""
+          echo "Installed packages:"
+          pip list
+
+          echo ""
+          echo "Python search path:"
+          python - <<'PY'
+          import sys
+          for p in sys.path:
+              print(p)
+          PY
+
+      - name: Verify package import
+        run: |
+          python - <<'PY'
+          import importlib
+          pkg = importlib.import_module("openeda")
+          print("Successfully imported:", pkg.__name__)
+          PY
+
+      - name: Verify test_pipeline.py exists
+        run: |
+          test -f test_pipeline.py
+          echo "Found test_pipeline.py"
+
+      - name: Check formatting
+        run: |
+          black --check .
+
+      - name: Ruff
+        run: |
+          ruff check .
+
+      - name: Flake8
+        run: |
+          flake8 .
+
+      - name: Security scan
+        run: |
+          bandit -r src || true
+
+      - name: Run unit tests
+        run: |
+          pytest -v
+
+      - name: Run pipeline test
+        run: |
+          python test_pipeline.py
+
+      - name: Upload output artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openeda-output-py${{ matrix.python-version }}
+          path: |
+            output/**
+          if-no-files-found: ignore
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-py${{ matrix.python-version }}
+          path: |
+            .coverage
+            coverage.xml
+          if-no-files-found: ignore
