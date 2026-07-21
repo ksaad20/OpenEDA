@@ -2,10 +2,6 @@
 
 We welcome contributions!
 
-## Before You Contribute
-
-By submitting a pull request, you agree to our [Contributor License Agreement](CLA.md).
-
 ## How to Contribute
 
 1. Fork the repository
@@ -19,3 +15,11 @@ By submitting a pull request, you agree to our [Contributor License Agreement](C
 - Follow PEP 8 for Python code
 - Add tests for new features
 - Update documentation as needed
+
+## Contributor License Agreement
+
+All contributors must agree to our [Contributor License Agreement (CLA)](CLA.md).
+
+**By submitting a pull request, you acknowledge that you have read and agree to the terms of our CLA.**
+
+If you have not yet signed the CLA, you will be prompted to do so when you open your first pull request.
