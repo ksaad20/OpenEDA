@@ -13,7 +13,6 @@ Exit code:
     0 = success
     1 = failure
 """
-
 from pathlib import Path
 import sys
 import traceback
