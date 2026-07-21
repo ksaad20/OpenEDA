@@ -13,11 +13,6 @@ Exit code:
     0 = success
     1 = failure
 """
-- name: Debug package
-  run: |
-    pwd
-    ls -R
-    python -c "import sys; print(sys.path)"
 
 from pathlib import Path
 import sys
