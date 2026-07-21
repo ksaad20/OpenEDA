@@ -1,15 +1,26 @@
 #!/usr/bin/env python3
 """
-OpenEDA Pipeline Test
+Functional pipeline test for OpenEDA.
 
-Runs the complete layout generation flow on the example OTA netlist.
+This script performs an end-to-end smoke test:
+1. Parse an example netlist
+2. Place devices
+3. Route nets
+4. Export GDS
+5. Evaluate benchmark metrics
+
+Exit code:
+    0 = success
+    1 = failure
 """
 
-import sys
 from pathlib import Path
+import sys
+import traceback
 
-# Add package to path if running from repo root
-sys.path.insert(0, str(Path(__file__).parent))
+# Repository root
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
 
 from openeda.netlist.parser import NetlistParser
 from openeda.placement.simple import SimplePlacer
@@ -18,78 +29,117 @@ from openeda.export.gds import GDSExporter
 from openeda.bench.evaluate import BenchmarkEvaluator
 
 
+def banner(text: str):
+    print("\n" + "=" * 70)
+    print(text)
+    print("=" * 70)
+
+
 def main() -> int:
-    """Run full pipeline test."""
-    print("=" * 50)
-    print("OpenEDA Pipeline Test")
-    print("=" * 50)
-    
-    # Paths
-    netlist_path = Path("examples/ota_2stage.sp")
-    output_path = Path("output/ota_layout.gds")
-    output_path.parent.mkdir(exist_ok=True)
-    
-    # Step 1: Parse netlist
-    print("\n[1/5] Parsing netlist...")
-    parser = NetlistParser()
-    circuit = parser.parse(netlist_path)
-    
-    print(f"  Title: {circuit.title}")
-    print(f"  Devices: {circuit.device_count}")
-    print(f"  Nets: {circuit.net_count}")
-    print(f"  MOSFETs: {len(circuit.devices_by_type('M'))}")
-    print(f"  Capacitors: {len(circuit.devices_by_type('C'))}")
-    
-    # Step 2: Place devices
-    print("\n[2/5] Placing devices...")
-    placer = SimplePlacer(pdk="sky130")
-    placement = placer.place(circuit)
-    
-    print(f"  Placed: {len(placement.positions)} devices")
-    print(f"  Bounding box: {placement.width:.2f} x {placement.height:.2f} um")
-    print(f"  Area: {placement.area:.2f} um^2")
-    
-    # Step 3: Route nets
-    print("\n[3/5] Routing nets...")
-    router = SimpleRouter(pdk="sky130")
-    routing = router.route(circuit, placement)
-    
-    print(f"  Routed nets: {len(routing.routes)}")
-    print(f"  Total wire length: {routing.total_wire_length:.2f} um")
-    print(f"  Total vias: {routing.total_via_count}")
-    
-    # Step 4: Export GDS
-    print("\n[4/5] Exporting GDSII...")
-    exporter = GDSExporter(pdk="sky130")
-    exporter.save(output_path, placement, routing)
-    
-    # Step 5: Evaluate
-    print("\n[5/5] Evaluating metrics...")
-    evaluator = BenchmarkEvaluator()
-    result = evaluator.evaluate(
-        task="analog_layout",
-        model="openeda-v0.1",
-        placement=placement,
-        routing=routing,
-        circuit_name="ota_2stage",
-    )
-    
-    print(f"  Composite score: {result.metrics.score():.2f}")
-    print(f"  Area: {result.metrics.total_area:.2f} um^2")
-    print(f"  Wire length: {result.metrics.total_wire_length:.2f} um")
-    print(f"  Est. capacitance: {result.metrics.estimated_capacitance:.2f} fF")
-    
-    # Save results
-    evaluator.save_results("output/results.json")
-    
-    print("\n" + "=" * 50)
-    print("Pipeline complete!")
-    print(f"Output: {output_path.absolute()}")
-    print("=" * 50)
-    
-    return 0
+    try:
+        banner("OpenEDA Functional Pipeline Test")
+
+        example = ROOT / "examples" / "ota_2stage.sp"
+
+        if not example.exists():
+            print(f"ERROR: Example netlist not found:\n{example}")
+            return 1
+
+        output_dir = ROOT / "output"
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        output_gds = output_dir / "ota_layout.gds"
+        output_json = output_dir / "results.json"
+
+        ############################################################
+        # Parse
+        ############################################################
+
+        print("[1/5] Parsing netlist")
+
+        parser = NetlistParser()
+        circuit = parser.parse(example)
+
+        print(f"Title      : {getattr(circuit,'title','Unknown')}")
+        print(f"Devices    : {getattr(circuit,'device_count',0)}")
+        print(f"Nets       : {getattr(circuit,'net_count',0)}")
+
+        ############################################################
+        # Placement
+        ############################################################
+
+        print("\n[2/5] Placement")
+
+        placer = SimplePlacer(pdk="sky130")
+        placement = placer.place(circuit)
+
+        print(f"Area       : {placement.area:.2f}")
+        print(f"Width      : {placement.width:.2f}")
+        print(f"Height     : {placement.height:.2f}")
+
+        ############################################################
+        # Routing
+        ############################################################
+
+        print("\n[3/5] Routing")
+
+        router = SimpleRouter(pdk="sky130")
+        routing = router.route(circuit, placement)
+
+        print(f"Routes     : {len(routing.routes)}")
+        print(f"Wire length: {routing.total_wire_length:.2f}")
+
+        ############################################################
+        # Export
+        ############################################################
+
+        print("\n[4/5] Export")
+
+        exporter = GDSExporter(pdk="sky130")
+        exporter.save(output_gds, placement, routing)
+
+        if output_gds.exists():
+            print("✓ GDS generated")
+        else:
+            print("✗ GDS export failed")
+            return 1
+
+        ############################################################
+        # Benchmark
+        ############################################################
+
+        print("\n[5/5] Benchmark")
+
+        evaluator = BenchmarkEvaluator()
+
+        result = evaluator.evaluate(
+            task="analog_layout",
+            model="openeda",
+            placement=placement,
+            routing=routing,
+            circuit_name="ota_2stage",
+        )
+
+        print(f"Score       : {result.metrics.score():.3f}")
+        print(f"Area        : {result.metrics.total_area:.2f}")
+        print(f"Wire Length : {result.metrics.total_wire_length:.2f}")
+
+        evaluator.save_results(output_json)
+
+        if output_json.exists():
+            print("✓ Benchmark results saved")
+        else:
+            print("✗ Failed to save benchmark results")
+            return 1
+
+        banner("Pipeline completed successfully")
+        return 0
+
+    except Exception:
+        banner("PIPELINE FAILED")
+        traceback.print_exc()
+        return 1
 
 
 if __name__ == "__main__":
     sys.exit(main())
-
