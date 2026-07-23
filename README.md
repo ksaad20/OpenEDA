@@ -71,7 +71,7 @@ OpenEDA/
 └── tests/               # Test suite
 
 Contributing
-We welcome contributions from the community! Whether you're fixing a bug, adding a new PDK, or improving our AI models, your help matters.
+We welcome contributions from the community! Whether you are fixing a bug, adding a new PDK, or improving our AI models, your help matters.
 Please read our Contributing Guide and Contributor License Agreement before submitting a pull request.
 
 License
