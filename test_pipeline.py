@@ -18,8 +18,11 @@ import sys
 import traceback
 
 # Repository root
+# Add repo root to path BEFORE any openeda imports
+import os
 ROOT = Path(__file__).resolve().parent
-sys.path.insert(0, str(ROOT))
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from openeda.netlist.parser import NetlistParser
 from openeda.placement.simple import SimplePlacer
