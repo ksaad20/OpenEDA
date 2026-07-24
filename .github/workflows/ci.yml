@@ -20,10 +20,10 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -e ".[dev]"  # <-- THIS FIXES IT: installs openeda + dev deps
+          pip install -e ".[dev]"  # <-- THIS IS THE FIX
       
       - name: Run tests
-        run: pytest  # or: python test_pipeline.py
+        run: pytest
       
       - name: Run linters
         run: |
