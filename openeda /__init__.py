@@ -17,8 +17,8 @@ __license__ = "Apache-2.0"
 
 # Package-level imports for convenient access
 from openeda.netlist.parser import NetlistParser
-from openeda.placement.simple import SimplePlacer
-from openeda.routing.simple import SimpleRouter
+from openeda.placement.placer import SimplePlacer
+from openeda.routing.router import SimpleRouter
 from openeda.export.gds import GDSExporter
 
 __all__ = [
