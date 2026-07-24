@@ -5,7 +5,7 @@ Implements routing engines for analog and
 mixed-signal layouts.
 """
 
-from .simple import SimpleRouter
+from .router import SimpleRouter
 
 __all__ = [
     "SimpleRouter",
