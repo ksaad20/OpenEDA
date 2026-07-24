@@ -7,7 +7,7 @@ utilities for OpenEDA.
 
 from .bench import BenchmarkEvaluator
 from .bench import LayoutMetrics
-from .bench import 
+from .bench import BenchmarkResults
 
 __all__ = [
     "evaluator",
