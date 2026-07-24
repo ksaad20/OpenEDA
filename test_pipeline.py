@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+import openeda
 from openeda.netlist.parser import NetlistParser
 from openeda.placement.placer import SimplePlacer
 from openeda.routing.router import SimpleRouter
