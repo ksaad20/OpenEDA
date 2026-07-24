@@ -20,7 +20,7 @@ from openeda.netlist.parser import NetlistParser
 from openeda.placement.placer import SimplePlacer
 from openeda.routing.router import SimpleRouter
 from openeda.export.gds import GDSExporter
-from openeda.bench.evaluate import evaluator 
+from openeda.bench.evaluate import BenchmarkEvaluator 
 
 __all__ = [
     "NetlistParser",
