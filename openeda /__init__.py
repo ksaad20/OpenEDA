@@ -10,7 +10,7 @@ License: Apache 2.0
 Repository: https://github.com/ksaad20/OpenEDA
 """
 
-__version__ = "0.1.0"
+__version__ = "0.0.1"
 __author__ = "OpenEDA Project Maintainers"
 __email__ = "kazisaadasif29@gmail.com"
 __license__ = "Apache-2.0"
@@ -27,5 +27,4 @@ __all__ = [
     "SimplePlacer",
     "SimpleRouter",
     "GDSExporter",
-    "__version__",
 ]
