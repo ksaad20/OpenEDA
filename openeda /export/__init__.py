@@ -6,9 +6,9 @@ IC design formats.
 """
 
 from .gds import GDSExporter
-GDSLayer
-RecordType
-DataType
+from .gds import GDSLayer
+from .gds import RecordType
+from .gds import DataType
 
 __all__ = [
     "GDSExporter",
