@@ -98,7 +98,7 @@ def main() -> int:
         print("\n[4/5] Export")
 
         exporter = GDSExporter(pdk="sky130")
-        exporter.save(output_gds, placement, routing)
+        exporting = exporter.save(output_gds, placement, routing)
 
         if output_gds.exists():
             print("✓ GDS generated")
