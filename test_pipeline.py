@@ -25,8 +25,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from openeda.netlist.parser import NetlistParser
-from openeda.placement.simple import SimplePlacer
-from openeda.routing.simple import SimpleRouter
+from openeda.placement.placer import SimplePlacer
+from openeda.routing.router import SimpleRouter
 from openeda.export.gds import GDSExporter
 from openeda.bench.evaluate import BenchmarkEvaluator
 
