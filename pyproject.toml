@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "openeda"
-version = "0.1.0"
+version = "0.0.1"
 description = "OpenEDA: Open-source Electronic Design Automation framework."
 readme = "README.md"
 requires-python = ">=3.10"
