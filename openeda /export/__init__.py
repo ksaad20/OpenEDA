@@ -7,8 +7,8 @@ IC design formats.
 
 from .gds import GDSExporter
 GDSLayer
+RecordType
 DataType
-DataLayer
 
 __all__ = [
     "GDSExporter",
