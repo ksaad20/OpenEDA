@@ -10,5 +10,5 @@ from .bench import LayoutMetrics
 from .bench import BenchmarkResults
 
 __all__ = [
-    "evaluator",
+    "BenchmarkEvaluator",
 ]
