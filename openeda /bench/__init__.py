@@ -5,8 +5,8 @@ Provides standardized benchmarking
 utilities for OpenEDA.
 """
 
-from .evaluate import BenchmarkEvaluator
+from .bench import evaluator
 
 __all__ = [
-    "BenchmarkEvaluator",
+    "evaluator",
 ]
