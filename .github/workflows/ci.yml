@@ -20,8 +20,12 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -e .  # <-- THIS IS THE FIX: install openeda in editable mode
-          pip install numpy  # or pip install -r requirements.txt
+          pip install -e ".[dev]"  # <-- THIS FIXES IT: installs openeda + dev deps
       
       - name: Run tests
-        run: python test_pipeline.py
+        run: pytest  # or: python test_pipeline.py
+      
+      - name: Run linters
+        run: |
+          black --check openeda tests
+          ruff check openeda tests
